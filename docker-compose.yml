@@ -1,0 +1,42 @@
+version: '3.4'
+
+networks:
+  dev:
+    driver: bridge 
+
+services:
+  api:
+    image: items
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - USER_SECRETS_ID=8a9361a6-1874-4541-a13b-d5900a375782
+    depends_on:
+      - "db"
+    container_name: Items-container
+    ports:
+      - "80:80"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - $APPDATA/Microsoft/UserSecrets/8a9361a6-1874-4541-a13b-d5900a375782:/root/.microsoft/usersecrets/8a9361a6-1874-4541-a13b-d5900a375782
+    networks:
+      - dev
+
+  db:
+    image: postgres:latest
+    container_name: db-container
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=items
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:
+      - data:/var/lib/postgresql/data/
+    networks:
+      - dev
+
+volumes:
+  data:

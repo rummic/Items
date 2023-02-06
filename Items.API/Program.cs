@@ -1,5 +1,7 @@
 using Items.API.Services.UsersServices;
+using Items.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -13,8 +15,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHealthChecks();
 
-AddJwtToken(builder.Services);
-RegisterServices(builder.Services);
+AddJwtToken();
+RegisterServices();
 
 var app = builder.Build();
 
@@ -29,15 +31,25 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
-
 app.MapControllers();
+
+if (app.Environment.IsDevelopment())
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var salesContext = scope.ServiceProvider.GetRequiredService<ItemsDbContext>();
+        salesContext.Database.EnsureDeleted();
+        salesContext.Database.EnsureCreated();
+    }
+}
 
 app.Run();
 
 
-void AddJwtToken(IServiceCollection services)
+void AddJwtToken()
 {
-    var key = Encoding.ASCII.GetBytes(builder.Configuration["JwtTokenSecret"]);
+    var key = builder.Configuration["JwtTokenSecret"];
+    var bytes = Encoding.ASCII.GetBytes(key);
     builder.Services.AddAuthentication(x =>
     {
         x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -49,14 +61,16 @@ void AddJwtToken(IServiceCollection services)
         x.TokenValidationParameters = new TokenValidationParameters()
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(key),
+            IssuerSigningKey = new SymmetricSecurityKey(bytes),
             ValidateIssuer = false,
             ValidateAudience = false
         };
     });
 }
 
-void RegisterServices(IServiceCollection services)
+void RegisterServices()
 {
-    services.AddScoped<IUsersService, UsersService>();
+    builder.Services.AddDbContext<ItemsDbContext>(options =>
+        options.UseNpgsql(builder.Configuration["ItemsDbContext"]));
+    builder.Services.AddScoped<IUsersService, UsersService>();
 }

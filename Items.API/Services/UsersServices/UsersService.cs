@@ -17,16 +17,16 @@ namespace Items.API.Services.UsersServices
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_config["JwtTokenSecret"]);
+            var expiryDate = DateTime.UtcNow.AddDays(1);
 
-            var subject = new ClaimsIdentity(
-                new[] { new Claim(ClaimTypes.Role, role) });
+            var subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Role, role) });
 
             var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = subject,
-                Expires = DateTime.UtcNow.AddDays(1),
+                Expires = expiryDate,
                 SigningCredentials = signingCredentials
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);

@@ -16,7 +16,7 @@ COPY . .
 WORKDIR "/src/Items.Data"
 RUN dotnet build -c Release -o /app
 
-WORKDIR "/src/Items.Data"
+WORKDIR "/src/Items.API.Test"
 RUN dotnet build -c Release -o /app
 
 WORKDIR "/src/Items.API"
