@@ -1,4 +1,5 @@
-﻿using Items.Data;
+﻿using Items.API.Services.ColorsService;
+using Items.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,29 +7,60 @@ namespace Items.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ColorsController : ControllerBase
     {
-        private readonly ItemsDbContext _dbContext;
-        public ColorsController(ItemsDbContext dbContext)
+        private readonly IColorsService _colorsService;
+        public ColorsController(IColorsService colorsService)
         {
-            _dbContext = dbContext;
+            _colorsService = colorsService;
         }
 
         [HttpGet]
-        [Authorize]
-        public ActionResult GetAll()
+        public async Task<ActionResult> GetActive()
         {
-            return Ok(_dbContext.Colors.ToList());
+            var response = await _colorsService.GetColors(x => x.IsActive);
+            if(response.HasErrors)
+            {
+                return NotFound(response);
+            }
+            return Ok(response);
         }
 
         [HttpPost]
         [Authorize(Roles = "admin")]
-        public ActionResult Add([FromBody] string colorName)
+        public async Task<ActionResult> Add([FromBody] string colorName)
         {
-            var guid = Guid.NewGuid();
-            _dbContext.Colors.Add(new Data.Model.Color() {Guid = guid, Name = colorName });
-            _dbContext.SaveChanges();
-            return Ok(_dbContext.Colors.Single(x => x.Guid == guid));
+            var response = await _colorsService.AddColor(colorName);
+            if(response.HasErrors)
+            {
+                return BadRequest(response);
+            }
+            return Ok(response);
+        }
+
+        [HttpGet("{colorId}")]
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult> GetColorsByColorId(Guid colorId)
+        {
+            var response = await _colorsService.GetColors(x => x.ColorId == colorId);
+            if (response.HasErrors)
+            {
+                return BadRequest(response);
+            }
+            return Ok(response);
+        }
+
+        [HttpPut("{versionId}")]
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult> EditColor(Guid versionId, [FromBody] string colorName)
+        {
+            var response = await _colorsService.EditColor(versionId, colorName);
+            if (response.HasErrors)
+            {
+                return BadRequest(response);
+            }
+            return Ok(response);
         }
     }
 

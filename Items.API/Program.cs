@@ -1,5 +1,7 @@
+using Items.API.Services.ColorsService;
 using Items.API.Services.UsersServices;
 using Items.Data;
+using Items.Data.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -30,8 +32,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseAuthorization();
 app.MapControllers();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 if (app.Environment.IsDevelopment())
 {
@@ -48,12 +52,13 @@ app.Run();
 
 void AddJwtToken()
 {
-    var key = builder.Configuration["JwtTokenSecret"];
-    var bytes = Encoding.ASCII.GetBytes(key);
+    var secret = builder.Configuration["JwtTokenSecret"];
+    var key = Encoding.ASCII.GetBytes(secret);
     builder.Services.AddAuthentication(x =>
     {
         x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
     }).AddJwtBearer(x =>
     {
         x.RequireHttpsMetadata = false;
@@ -61,7 +66,7 @@ void AddJwtToken()
         x.TokenValidationParameters = new TokenValidationParameters()
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(bytes),
+            IssuerSigningKey = new SymmetricSecurityKey(key),
             ValidateIssuer = false,
             ValidateAudience = false
         };
@@ -73,4 +78,7 @@ void RegisterServices()
     builder.Services.AddDbContext<ItemsDbContext>(options =>
         options.UseNpgsql(builder.Configuration["ItemsDbContext"]));
     builder.Services.AddScoped<IUsersService, UsersService>();
+    builder.Services.AddScoped<IColorsService, ColorsService>();
+    builder.Services.AddScoped<IRepository, Repository>();
+
 }
