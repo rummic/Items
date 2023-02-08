@@ -41,8 +41,8 @@ if (app.Environment.IsDevelopment())
 {
     using (var scope = app.Services.CreateScope())
     {
-        var salesContext = scope.ServiceProvider.GetRequiredService<ItemsDbContext>();
-        salesContext.Database.EnsureCreated();
+        var itemsDbContext = scope.ServiceProvider.GetRequiredService<ItemsDbContext>();
+        itemsDbContext.Database.EnsureCreated();
     }
 }
 
