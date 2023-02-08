@@ -42,6 +42,7 @@ if (app.Environment.IsDevelopment())
     using (var scope = app.Services.CreateScope())
     {
         var itemsDbContext = scope.ServiceProvider.GetRequiredService<ItemsDbContext>();
+        itemsDbContext.Database.EnsureDeleted();
         itemsDbContext.Database.EnsureCreated();
     }
 }

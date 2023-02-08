@@ -3,7 +3,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Items.Data.Model
 {
-    [Index(nameof(Name), nameof(CreatedOn), IsUnique = true)]
+    [Index(nameof(Name), IsUnique = true)]
+    [Index(nameof(CreatedOn), IsUnique = true)]
     public class Item
     {
         private const int idMaxLength = 12;
