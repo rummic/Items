@@ -17,7 +17,7 @@ namespace Items.API.Services.ItemsServices
         public async Task<ResponseDto<Item>> AddItem(AddItemDto itemDto)
         {
             var response = new ResponseDto<Item>();
-            var newItem = new Item(itemDto.Name, itemDto.Note, itemDto.colorVersionId);
+            var newItem = new Item(itemDto.Name, itemDto.Note, itemDto.ColorVersionId);
             Item addedItem;
             try
             {
@@ -45,7 +45,7 @@ namespace Items.API.Services.ItemsServices
 
             itemToEdit.Name = itemDto.Name;
             itemToEdit.Note = itemDto.Note;
-            itemToEdit.ColorVersionId = itemDto.colorVersionId;
+            itemToEdit.ColorVersionId = itemDto.ColorVersionId;
             var editResult = await _repository.EditItem(itemToEdit);
             response.Value = editResult;
             return response;
@@ -55,7 +55,7 @@ namespace Items.API.Services.ItemsServices
         {
             var response = new ResponseDto<List<Item>>();
             var items = await _repository.GetItems();
-            if(!items.Any())
+            if (!items.Any())
             {
                 response.AddError("There are no items.");
                 return response;
@@ -81,7 +81,7 @@ namespace Items.API.Services.ItemsServices
         public async Task<ResponseDto<ItemsPagedDto>> GetItemsPaged(SearchItemsDto searchDto)
         {
             var response = new ResponseDto<ItemsPagedDto>();
-            var items = await _repository.GetItemsPaged(searchDto.Ascending, searchDto.LastCreatedOn, searchDto.PageSize);
+            var items = await _repository.GetItemsPaged(searchDto.Query, searchDto.Ascending, searchDto.LastCreatedOn, searchDto.PageSize);
             if (!items.Any())
             {
                 response.AddError("There are no items.");

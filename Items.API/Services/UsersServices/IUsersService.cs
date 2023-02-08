@@ -2,6 +2,6 @@
 {
     public interface IUsersService
     {
-        public string Authenticate (string role);
+        public string Authenticate(string role);
     }
 }

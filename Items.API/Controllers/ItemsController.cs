@@ -22,21 +22,23 @@ namespace Items.API.Controllers
         public async Task<ActionResult> GetItems()
         {
             var response = await _itemsService.GetItems();
-            if(response.HasErrors)
+            if (response.HasErrors)
             {
                 return NotFound(response);
             }
+
             return Ok(response);
         }
 
-        [HttpPost("/search")]
-        public async Task<ActionResult> GetItemsPaged([FromBody]SearchItemsDto searchDto)
+        [HttpPost("search")]
+        public async Task<ActionResult> GetItemsPaged([FromBody] SearchItemsDto searchDto)
         {
             var response = await _itemsService.GetItemsPaged(searchDto);
             if (response.HasErrors)
             {
                 return NotFound(response);
             }
+
             return Ok(response);
         }
 
@@ -48,6 +50,7 @@ namespace Items.API.Controllers
             {
                 return NotFound(response);
             }
+
             return Ok(response);
         }
 
@@ -60,6 +63,7 @@ namespace Items.API.Controllers
             {
                 return BadRequest(response);
             }
+
             return Ok(response);
         }
 
@@ -70,8 +74,9 @@ namespace Items.API.Controllers
             var response = await _itemsService.EditItem(itemDto);
             if (response.HasErrors)
             {
-                return BadRequest(response);
+                return NotFound(response);
             }
+
             return Ok(response);
         }
     }

@@ -20,7 +20,7 @@ namespace Items.Data.Repository
         }
         public async Task<List<Color>> GetColors(Func<Color, bool> condition)
         {
-            return (await _dbContext.Colors.ToListAsync()).Where(condition).ToList();
+            return (await _dbContext.Colors.AsNoTracking().ToListAsync()).Where(condition).ToList();
         }
 
         public async Task<Color> EditColor(Color colorToEdit, Color newColor)
@@ -45,7 +45,7 @@ namespace Items.Data.Repository
 
         public async Task<List<Item>> GetItems()
         {
-            var items = await _dbContext.Items.ToListAsync();
+            var items = await _dbContext.Items.AsNoTracking().ToListAsync();
             return items;
         }
 
@@ -62,10 +62,14 @@ namespace Items.Data.Repository
             return editedItem;
         }
 
-        public async Task<List<Item>> GetItemsPaged(bool ascending, DateTime lastCreatedOn, int pageSize)
+        public async Task<List<Item>> GetItemsPaged(string query, bool ascending, DateTime lastCreatedOn, int pageSize)
         {
-            if(ascending) return await _dbContext.Items.OrderBy(x => x.Id).Where(x => x.CreatedOn > lastCreatedOn).Take(pageSize).ToListAsync();
-            else return await _dbContext.Items.OrderByDescending(x => x.Id).Where(x => x.CreatedOn < lastCreatedOn).Take(pageSize).ToListAsync();
+            var items = _dbContext.Items.AsNoTracking().Include(x => x.Color).Where(x => x.Name.Contains(query) ||
+                                                                          x.Note.Contains(query) ||
+                                                                          x.Color.Name.Contains(query));
+            //Keyset pagination
+            if (ascending) return await items.OrderBy(x => x.CreatedOn).Where(x => x.CreatedOn > lastCreatedOn).Take(pageSize).ToListAsync();
+            else return await items.OrderByDescending(x => x.CreatedOn).Where(x => x.CreatedOn < lastCreatedOn).Take(pageSize).ToListAsync();
         }
 
         #endregion

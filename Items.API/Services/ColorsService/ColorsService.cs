@@ -16,12 +16,12 @@ namespace Items.API.Services.ColorsService
         {
             var response = new ResponseDto<List<Color>>();
             List<Color> colors = await _repository.GetColors(condition);
-
             if (!colors.Any())
             {
                 response.AddError("There are no colors.");
                 return response;
             }
+
             response.Value = colors;
             return response;
         }

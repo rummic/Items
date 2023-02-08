@@ -4,6 +4,6 @@
     {
         public string Name { get; set; }
         public string Note { get; set; }
-        public Guid colorVersionId { get; set; }
+        public Guid ColorVersionId { get; set; }
     }
 }

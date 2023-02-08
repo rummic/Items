@@ -2,6 +2,10 @@
 
 namespace Items.Data.Repository
 {
+    // I have created the repository to act as a mockable layer above DbContext
+    // and a single repository is used for both models,
+    // as there is not enough logic here that would make the separation worth it.
+    // If there would be a need to do repo per model it is easily splittable.
     public interface IRepository
     {
         #region Color
@@ -15,8 +19,7 @@ namespace Items.Data.Repository
         public Task<List<Item>> GetItems();
         public Task<Item> GetItem(string id);
         public Task<Item> EditItem(Item item);
-        public Task<List<Item>> GetItemsPaged(bool ascending, DateTime lastCreatedOn, int pageSize);
-
+        public Task<List<Item>> GetItemsPaged(string query, bool ascending, DateTime lastCreatedOn, int pageSize);
         #endregion
     }
 }

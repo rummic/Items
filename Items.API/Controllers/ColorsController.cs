@@ -1,5 +1,4 @@
 ﻿using Items.API.Services.ColorsService;
-using Items.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,10 +19,11 @@ namespace Items.API.Controllers
         public async Task<ActionResult> GetActive()
         {
             var response = await _colorsService.GetColors(x => x.IsActive);
-            if(response.HasErrors)
+            if (response.HasErrors)
             {
                 return NotFound(response);
             }
+
             return Ok(response);
         }
 
@@ -36,6 +36,7 @@ namespace Items.API.Controllers
             {
                 return NotFound(response);
             }
+
             return Ok(response);
         }
 
@@ -44,10 +45,11 @@ namespace Items.API.Controllers
         public async Task<ActionResult> Add([FromBody] string colorName)
         {
             var response = await _colorsService.AddColor(colorName);
-            if(response.HasErrors)
+            if (response.HasErrors)
             {
                 return BadRequest(response);
             }
+
             return Ok(response);
         }
 
@@ -60,6 +62,7 @@ namespace Items.API.Controllers
             {
                 return BadRequest(response);
             }
+
             return Ok(response);
         }
     }

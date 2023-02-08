@@ -8,7 +8,7 @@ namespace Items.API.Services.UsersServices
     public class UsersService : IUsersService
     {
         private readonly IConfiguration _config;
-        
+
         public UsersService(IConfiguration configuration)
         {
             _config = configuration;
@@ -30,7 +30,7 @@ namespace Items.API.Services.UsersServices
                 SigningCredentials = signingCredentials
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            
+
             return tokenHandler.WriteToken(token);
         }
     }

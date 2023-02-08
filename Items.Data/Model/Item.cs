@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Items.Data.Model
 {
-    [Index(nameof(Name), IsUnique = true)]
+    [Index(nameof(Name), nameof(CreatedOn), IsUnique = true)]
     public class Item
     {
         private const int idMaxLength = 12;
@@ -16,7 +16,6 @@ namespace Items.Data.Model
         public string Name { get; set; }
         public string Note { get; set; }
         public DateTime CreatedOn { get; set; }
-        
         public Guid ColorVersionId { get; set; }
         public Color Color { get; set; } = null!;
 
