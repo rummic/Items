@@ -49,6 +49,7 @@ namespace Items.API.Services.ColorsService
             if (!colorsFound.Any())
             {
                 response.AddError($"No color with {versionId} found.");
+                return response;
             }
 
             var colorToEdit = colorsFound.Single();

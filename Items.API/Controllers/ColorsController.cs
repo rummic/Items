@@ -27,24 +27,24 @@ namespace Items.API.Controllers
             return Ok(response);
         }
 
-        [HttpPost]
-        [Authorize(Roles = "admin")]
-        public async Task<ActionResult> Add([FromBody] string colorName)
-        {
-            var response = await _colorsService.AddColor(colorName);
-            if(response.HasErrors)
-            {
-                return BadRequest(response);
-            }
-            return Ok(response);
-        }
-
         [HttpGet("{colorId}")]
         [Authorize(Roles = "admin")]
         public async Task<ActionResult> GetColorsByColorId(Guid colorId)
         {
             var response = await _colorsService.GetColors(x => x.ColorId == colorId);
             if (response.HasErrors)
+            {
+                return NotFound(response);
+            }
+            return Ok(response);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult> Add([FromBody] string colorName)
+        {
+            var response = await _colorsService.AddColor(colorName);
+            if(response.HasErrors)
             {
                 return BadRequest(response);
             }

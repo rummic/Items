@@ -1,4 +1,5 @@
 using Items.API.Services.ColorsService;
+using Items.API.Services.ItemsServices;
 using Items.API.Services.UsersServices;
 using Items.Data;
 using Items.Data.Repository;
@@ -42,7 +43,6 @@ if (app.Environment.IsDevelopment())
     using (var scope = app.Services.CreateScope())
     {
         var salesContext = scope.ServiceProvider.GetRequiredService<ItemsDbContext>();
-        salesContext.Database.EnsureDeleted();
         salesContext.Database.EnsureCreated();
     }
 }
@@ -79,6 +79,7 @@ void RegisterServices()
         options.UseNpgsql(builder.Configuration["ItemsDbContext"]));
     builder.Services.AddScoped<IUsersService, UsersService>();
     builder.Services.AddScoped<IColorsService, ColorsService>();
+    builder.Services.AddScoped<IItemsService, ItemsService>();
     builder.Services.AddScoped<IRepository, Repository>();
 
 }
