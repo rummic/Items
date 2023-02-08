@@ -26,7 +26,6 @@ namespace Items.API.Test.ColorsTests
             //Arrange
             var oldColor = new Color("Red");
             var versionId = oldColor.VersionId;
-            Func<Color, bool> condition = x => x.VersionId == versionId;
             _repositoryMock.Setup(x => x.GetColors(It.IsAny<Func<Color, bool>>())).ReturnsAsync(new List<Color>() { oldColor });
 
             var newColor = new Color(oldColor.ColorId, "Green");
